@@ -111,7 +111,10 @@ class Kintone:
                 if field_type == 'NUMBER' and field_value is not None and field_value != "":
                     #intかfloatにキャスト
                     try:
-                        field_value = int(field_value)
+                        # field_value = int(field_value)
+                        if field_value != '':
+                            field_value = int(field_value)
+
                     except ValueError:
                         field_value = float(field_value)
 
@@ -124,9 +127,15 @@ class Kintone:
                             if sub_value['type'] == 'NUMBER' and field_value is not None:
                                 #intかfloatにキャスト
                                 try:
-                                    sub_value['value'] = int(sub_value['value'])
+                                    # sub_value['value'] = int(sub_value['value'])
+                                    if sub_value['value'] != '':
+                                        sub_value['value'] = int(sub_value['value'])
+
                                 except ValueError:
-                                    sub_value['value'] = float(sub_value['value'])
+                                    # sub_value['value'] = float(sub_value['value'])
+                                    if sub_value['value'] != '':
+                                        sub_value['value'] = float(sub_value['value'])
+
 
                             subtable_record[sub_field_code] = sub_value['value']
                         subtable.append(subtable_record)
@@ -187,14 +196,15 @@ class Kintone:
                         subtable_record['id'] = sub_rec['id']
                         for sub_field_code, sub_value in sub_rec['value'].items():
                             if sub_value['type'] == 'NUMBER' and field_value is not None:
-                                #intかfloatにキャスト
                                 try:
-                                    sub_value['value'] = int(sub_value['value'])
+                                    if sub_value['value'] != '':
+                                        sub_value['value'] = float(sub_value['value'])
+                                    else:
+                                        sub_value['value'] = None  # 如果需要默认值，这里可以设置为 0 或其他值
                                 except ValueError:
-                                    sub_value['value'] = float(sub_value['value'])
-
-                            subtable_record[sub_field_code] = sub_value['value']
+                                    raise Exception(f"Error converting field {sub_field_code} to float: {sub_value['value']}")
                         subtable.append(subtable_record)
+
                     field_value = subtable
 
                 tmp_record[field_code] = field_value
